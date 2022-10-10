@@ -1,0 +1,29 @@
+@using SolrIrApp.Models;
+@using SolrIrApp.ExtensionMethods;
+@model Book
+
+@{
+var number = ViewData["number"];
+var link = $"http://{ViewContext.HttpContext.Request.Host}{Model.Link}";
+}
+
+<dl class="row">
+    <dt class="col-sm-2">
+        Result @number
+    </dt>
+    <dd class="col-sm-4">
+        <a href="@link">@Model.Title</a>
+    </dd>
+</dl>
+<dl class="row">
+    <dt class="col-sm-2">Date indexed:</dt>
+    <dd class="col-sm-4">
+        @Model.DateIndexed.ToShortDateString()
+    </dd>
+</dl>
+<dl class="row">
+    <dt class="col-sm-2">Size:</dt>
+    <dd class="col-sm-4">
+        @Model.Size.toByteUnitString()
+    </dd>
+</dl>

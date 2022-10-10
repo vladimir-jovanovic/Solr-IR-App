@@ -1,0 +1,111 @@
+﻿@page "{handler?}"
+@model IndexModel
+@{
+ViewData["Title"] = "Home page";
+
+var queryDateDisabled = Model.Field != "dateIndexed" ? "disabled" : "";
+var queryDateHidden = Model.Field != "dateIndexed" ? "hidden" : "";
+var queryStringDisabled = queryDateDisabled != "disabled" ? "disabled" : "";
+var queryStringHidden = queryDateHidden != "hidden" ? "hidden" : "";
+
+var fieldSelectId = "fieldSelect";
+var queryStringInputId = "queryStringInput";
+var queryDateInputId = "queryDateInput";
+
+var numIndexed = TempData["NumIndexed"] ?? 0;
+}
+
+<div>
+    <form enctype="multipart/form-data" method="post">
+        <div class="row justify-content-start row-gap">
+            <div class="col-sm-6">
+                <div class="input-group">
+                    <input accept=".txt" asp-for="Files" class="form-control" aria-label="files to index"
+                        aria-describedby="btnIndex">
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <button id="btnIndex" type="submit" class="btn btn-primary mybtn">Index</button>
+            </div>
+        </div>
+        @if((int)numIndexed > 0){
+        <div class="row mt-2">
+            <div class="col-sm-6">
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    Successfully indexed @numIndexed @((int)numIndexed > 1 ? "files" : "file")!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+        }
+    </form>
+</div>
+<div class="mt-3">
+    <form asp-page-handler="Search" asp-for-PageIndex="1" method="get">
+        <div class="row justify-content-start row-gap">
+            <div class="col-sm-2">
+                <div class="input-group">
+                    <select id="@fieldSelectId" name="Field" class="form-select" asp-items="Model.SelectOptions"
+                        asp-value="@Model.Field" asp-for="Field"></select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="input-group">
+                    <input @queryStringDisabled @queryStringHidden id="@queryStringInputId"
+                        class="input-group-append form-control" value="@Model.QueryString" name="QueryString"
+                        type="text" asp-for="QueryString" />
+                    <input @queryDateHidden @queryDateDisabled id="@queryDateInputId"
+                        class="input-group-append form-control" value="@Model.QueryString" name="QueryString"
+                        asp-for="QueryString" type="date" />
+                </div>
+            </div>
+            <div class="col-sm-1">
+                <button type="submit" class="btn btn-primary mybtn">Search</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if(Model.SearchResults != null){
+<div class="searchResults__container mt-4">
+    <ul class="ps-4">
+        @foreach(var(result, number) in Model.SearchResults){
+        ViewData["number"] = number + 1;
+        <li class="searchResults__item">
+            <partial name="_SearchResultPartial" model="@result" view-data="ViewData" />
+        </li>
+        }
+    </ul>
+</div>
+
+<p>Total of @Model.TotalResults results found.</p>
+
+if(Model.SearchResults.Any()){
+<partial name="_PageNavigationPartial" model="@Model.Pagination" />
+}
+}
+
+@section Scripts{
+<script>
+    const queryStringInput = document.getElementById("@queryStringInputId");
+    const queryDateInput = document.getElementById("@queryDateInputId");
+
+    document.getElementById("@fieldSelectId").onchange = ({target}) => {
+        const {value} = target;
+
+        if (value != "dateIndexed") {
+            queryStringInput.disabled = false;
+            queryStringInput.hidden = false;
+            queryStringInput.value = "";
+            queryDateInput.disabled = true;
+            queryDateInput.hidden = true;
+        }
+        else {
+            queryStringInput.disabled = true;
+            queryStringInput.hidden = true;
+            queryDateInput.disabled = false;
+            queryDateInput.hidden = false;
+        }
+    }
+</script>
+}

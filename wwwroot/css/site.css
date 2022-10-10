@@ -1,0 +1,57 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html,
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+header,
+footer {
+  height: 5em;
+}
+
+.mycontainer,
+.mymain {
+  display: flex;
+  flex-direction: column;
+  flex: auto;
+}
+
+.mybtn {
+  width: 5em !important;
+}
+
+.searchResults__container {
+  flex: auto;
+}
+
+.searcResults__list {
+  padding-left: 1em;
+}
+
+ul {
+  padding: 0;
+}
+
+.searchResults__item:not(:first-child) {
+  margin-top: 1em;
+}
+
+dt,
+dl {
+  margin: 0;
+}
+
+.row-gap {
+  row-gap: 0.5em;
+}

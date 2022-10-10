@@ -1,0 +1,36 @@
+@using SolrIrApp;
+@model SolrIrApp.Models.Pagination
+
+@{
+var prevDisabled = !@Model.HasPreviousPage ? "disabled" : "";
+var nextDisabled = !@Model.HasNextPage ? "disabled" : "";
+
+var path = Model.RouteInfo.Path;
+var action = Model.RouteInfo.Action;
+var qs = Model.RouteInfo.QueryValue;
+var currentUrl = $"{path}/{action}?{qs}";
+}
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        <li class="page-item @prevDisabled">
+            <a class="page-link" aria-label="Previous" href="@currentUrl&pageIndex=@(Model.PageIndex - 1)">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        @foreach(int number in @Model.DisplayRange){
+        var classActive = @Model.PageIndex == number ? "active" : "";
+        var ariaPage = @Model.PageIndex == number ? "page" : "false";
+        <li class="page-item @classActive" aria-current="@ariaPage">
+            <a class="page-link" href="@currentUrl&pageIndex=@number">
+                @number
+            </a>
+        </li>
+        }
+        <li class="page-item @nextDisabled">
+            <a class="page-link" aria-label="Next" href="@currentUrl&pageIndex=@(Model.PageIndex + 1)">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
